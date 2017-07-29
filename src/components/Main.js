@@ -8,13 +8,12 @@ const possibleQuestions = {
     hp:     'How much HP do you have?',
     number: 'What numer are you?',
     rarity: 'What rarity do you have?',
-    type :  'What type are you?',
+    types :  'What type are you?',
     weaknesses: 'What is/are your weakness/es?',
     attacks: 'What are your attacks?',
-    resisitance: 'What is your resistance?',
-    retreatCost: 'What is your retreat cost?',
     evolvesFrom: 'You evolve from?',
-    ability: 'What is your ability'
+    ability: 'What is your ability',
+    resistances: 'What is your resistance?'
 };
 
 export class Main extends React.Component {
@@ -24,14 +23,14 @@ export class Main extends React.Component {
             data : [],
             loading: false,
             currentQuestion: '',
-            possibleAnswers: {},
+            possibleAnswers: [],
             rightAnswer: {}
         };
         this.chooseQuestion = this.chooseQuestion.bind(this);
     }
     componentDidMount(){
         $.ajax({
-            url: 'https://api.pokemontcg.io/v1/cards?pageSize=102&setCode=base1',
+            url: 'https://api.pokemontcg.io/v1/cards?pageSize=69&setCode=base1&supertype=Pokémon',
             dataType: 'json',
             success: function(data) {
                 let random = Math.floor((Math.random()* data.cards.length) +1);
@@ -41,6 +40,7 @@ export class Main extends React.Component {
                     data: rawData,
                     rightAnswer: rightAnswer
                 });
+                console.log(this.state.rightAnswer);
             }.bind(this),
             error: function(xhr, status, err){
                 this.setState({
@@ -58,11 +58,129 @@ export class Main extends React.Component {
     }
     
     createAnswers(para){
-        const answers = this.state.data.map( (object) =>
+        //get all possible Answers
+        const answerItem = this.state.data.map( (object) =>
             object[para]
         );
-        console.log(this.state.rightAnswer);
-        console.log(answers);
+        const answerItemUniquePre = [...new Set(answerItem)];
+        let answerItemUnique = [];
+        for(var k = 0; k < answerItemUniquePre.length; k++){
+            if(answerItemUniquePre[k]){
+                answerItemUnique.push(answerItemUniquePre[k]);
+            }
+        }
+        let answerItemUniquePost = [];
+        let answers = [];
+        switch(para){
+            case 'hp':
+                console.log('Hp');
+                break;
+            case 'number':
+                console.log('number');
+                break;
+            case 'ability':
+                console.log(answerItemUnique);
+                for(let j = 0; j < answerItemUnique.length; j++){
+                    answerItemUniquePost.push(answerItemUnique[j].name);
+                }
+                console.log(answerItemUniquePost);
+                answers = this.getAnswersFromStrings(para, answerItemUniquePost, '3');
+                break;
+            case 'evolvesFrom':
+                answerItemUnique.push('None');
+                answers = this.getAnswersFromStrings(para, answerItemUnique, '2');
+                break;
+            case 'types':
+                for(let j = 0; j < answerItemUnique.length; j++){
+                    answerItemUniquePost.push(answerItemUnique[j][0]);
+                }
+                answers = this.getAnswersFromStrings(para, answerItemUniquePost, '1');
+                break;
+            case 'rarity':
+                for(let i = 0; i < answerItemUnique.length; i++){
+                    answers.push([answerItemUnique[i]]);
+                }
+                console.log();
+                break;
+            case 'weaknesses':
+                answers = this.getAnswersFromObjects(para, 'type', answerItemUnique);
+                console.log();
+                break;
+            case 'attacks':
+                answers= this.getAnswersFromObjects(para, 'name', answerItemUnique);
+                console.log();
+                break;
+            case 'resistances':
+                answerItemUnique.push([{type: 'None', value: '0'}]);
+                answers= this.getAnswersFromObjects(para, 'type', answerItemUnique);
+                console.log();
+                break;
+            default:
+                console.log('wrong');
+        }
+        this.setState({
+            possibleAnswers: answers
+        });
+    }
+    
+    getAnswersFromStrings(para, answerItemUnique, formatRightAnswer){
+        let result = [];
+        if(this.state.rightAnswer[para] == null){
+            result.push('None');
+        }else{
+            if(formatRightAnswer === '1'){
+                result.push(this.state.rightAnswer[para][0]);
+            }else if(formatRightAnswer === '3'){
+                result.push(this.state.rightAnswer[para].name);
+            }else{
+                result.push(this.state.rightAnswer[para]);
+            }
+            
+        }
+        while(result.length < 4){
+            const randomV = Math.floor((Math.random() * answerItemUnique.length) + 1) - 1;
+            if($.inArray(answerItemUnique[randomV], result) === -1){
+                result.push(answerItemUnique[randomV]);
+            }else{
+                console.log('nicht du');
+                console.log(answerItemUnique[randomV]);
+                console.log(result);
+            }
+        }
+        console.log(result);
+        return result;
+    }
+    
+    getAnswersFromObjects(para, attribut, answerItemUnique){
+        let result = [];
+        let pseudoAnswer = [];
+        let objectToStrings = [];
+        if(this.state.rightAnswer[para] == null){
+            objectToStrings.push('None');
+        }else{
+            for(var i = 0; i < this.state.rightAnswer[para].length; i++){
+                objectToStrings.push(this.state.rightAnswer[para][i][attribut]);
+            }
+        }
+        pseudoAnswer.push(objectToStrings[0]);
+        result.push(objectToStrings);
+        while(result.length < 4){
+            const randomV = Math.floor((Math.random() * answerItemUnique.length) + 1) - 1;
+            if($.inArray(answerItemUnique[randomV][0][attribut], pseudoAnswer) === -1){
+                let objectToStrings = []
+                for(var j = 0; j < answerItemUnique[randomV].length; j++){
+                    objectToStrings.push(answerItemUnique[randomV][j][attribut]);
+                }
+                pseudoAnswer.push(objectToStrings[0]);
+                result.push(objectToStrings);
+            }else{
+                console.log('nicht du');
+                console.log(answerItemUnique[randomV][0][attribut]);
+                console.log(pseudoAnswer);
+            }
+        }
+        console.log(result);
+        return result;
     }
     
     render() {
@@ -79,6 +197,7 @@ export class Main extends React.Component {
                         <div className='col-md-4'>
                             <h3>Selected question</h3>
                             <Answers currentQuestion={this.state.currentQuestion}/>
+                            <p>{this.state.possibleAnswers}</p>
                         </div>
                         <div className='col-md-4'>
                             <h3>Answer history</h3>
