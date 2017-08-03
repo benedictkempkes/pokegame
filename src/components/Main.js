@@ -40,7 +40,6 @@ export class Main extends React.Component {
                     data: rawData,
                     rightAnswer: rightAnswer
                 });
-                console.log(this.state.rightAnswer);
             }.bind(this),
             error: function(xhr, status, err){
                 this.setState({
@@ -73,17 +72,15 @@ export class Main extends React.Component {
         let answers = [];
         switch(para){
             case 'hp':
-                console.log('Hp');
+                answers = [0, 120];
                 break;
             case 'number':
-                console.log('number');
+                answers = [0, 69];
                 break;
             case 'ability':
-                console.log(answerItemUnique);
                 for(let j = 0; j < answerItemUnique.length; j++){
                     answerItemUniquePost.push(answerItemUnique[j].name);
                 }
-                console.log(answerItemUniquePost);
                 answers = this.getAnswersFromStrings(para, answerItemUniquePost, '3');
                 break;
             case 'evolvesFrom':
@@ -98,22 +95,18 @@ export class Main extends React.Component {
                 break;
             case 'rarity':
                 for(let i = 0; i < answerItemUnique.length; i++){
-                    answers.push([answerItemUnique[i]]);
+                    answers.push(answerItemUnique[i]);
                 }
-                console.log();
                 break;
             case 'weaknesses':
                 answers = this.getAnswersFromObjects(para, 'type', answerItemUnique);
-                console.log();
                 break;
             case 'attacks':
                 answers= this.getAnswersFromObjects(para, 'name', answerItemUnique);
-                console.log();
                 break;
             case 'resistances':
                 answerItemUnique.push([{type: 'None', value: '0'}]);
                 answers= this.getAnswersFromObjects(para, 'type', answerItemUnique);
-                console.log();
                 break;
             default:
                 console.log('wrong');
@@ -121,6 +114,10 @@ export class Main extends React.Component {
         this.setState({
             possibleAnswers: answers
         });
+    }
+    
+    componentDidUpdate() {
+        console.log(this.state.possibleAnswers);
     }
     
     getAnswersFromStrings(para, answerItemUnique, formatRightAnswer){
@@ -141,13 +138,8 @@ export class Main extends React.Component {
             const randomV = Math.floor((Math.random() * answerItemUnique.length) + 1) - 1;
             if($.inArray(answerItemUnique[randomV], result) === -1){
                 result.push(answerItemUnique[randomV]);
-            }else{
-                console.log('nicht du');
-                console.log(answerItemUnique[randomV]);
-                console.log(result);
             }
         }
-        console.log(result);
         return result;
     }
     
@@ -173,13 +165,8 @@ export class Main extends React.Component {
                 }
                 pseudoAnswer.push(objectToStrings[0]);
                 result.push(objectToStrings);
-            }else{
-                console.log('nicht du');
-                console.log(answerItemUnique[randomV][0][attribut]);
-                console.log(pseudoAnswer);
             }
         }
-        console.log(result);
         return result;
     }
     
@@ -196,8 +183,7 @@ export class Main extends React.Component {
                         </div>
                         <div className='col-md-4'>
                             <h3>Selected question</h3>
-                            <Answers currentQuestion={this.state.currentQuestion}/>
-                            <p>{this.state.possibleAnswers}</p>
+                            <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers}/>
                         </div>
                         <div className='col-md-4'>
                             <h3>Answer history</h3>
