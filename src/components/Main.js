@@ -56,7 +56,6 @@ export class Main extends React.Component {
                     rightAnswer: rightAnswer,
                     falseAnswer: falseAnswer
                 });
-                console.log(this.state.rightAnswer);
             }.bind(this),
             error: function(xhr, status, err){
                 this.setState({
@@ -77,7 +76,6 @@ export class Main extends React.Component {
             if($.inArray(nextPokemon, falseAnswer) === -1){
                 falseAnswer.push(nextPokemon);
             }
-
         }
         this.setState({
             possibleQuestions: {
@@ -88,7 +86,7 @@ export class Main extends React.Component {
                 weaknesses: 'What is/are your weakness/es?',
                 attacks: 'What are your attacks?',
                 evolvesFrom: 'You evolve from?',
-                ability: 'What is your ability',
+                ability: 'What is your ability?',
                 resistances: 'What is your resistance?'
             },
             currentQuestion: 'Select one attribute from the right',
@@ -97,7 +95,6 @@ export class Main extends React.Component {
             falseAnswer: falseAnswer,
             answers: []
         });
-        console.log(this.state.rightAnswer);
     }
     
     chooseQuestion(newQuestion) {
@@ -227,9 +224,9 @@ export class Main extends React.Component {
             let finalAnswer;
             let finalImg = this.state.rightAnswer.imageUrlHiRes;
             if(val1 === this.state.rightAnswer.name){
-                finalAnswer = 'Congratulations! You won!';
+                finalAnswer = 'Congratulations! You won! The right answer is: ' + this.state.rightAnswer.name + '.';
             }else{
-                finalAnswer = 'Sorry! You lost!';
+                finalAnswer = 'Sorry! You lost! The right answer is: ' + this.state.rightAnswer.name + '.';
             }
             
             this.setState({
@@ -246,11 +243,10 @@ export class Main extends React.Component {
         let newPossibleQuestions = this.state.possibleQuestions;
         delete newPossibleQuestions[questionValue];
         let answer;
-        if(val2 !== 'null'){
+        if(val2 !== null){
            answer = val1 + "-" + val2;
         }else{
            answer = val1;
-            
         }
         let solution = '';
         if(val2 !== null){
@@ -352,20 +348,27 @@ export class Main extends React.Component {
            console.log('Webpage is loading');
         }else{
             content = 
-                    <div>
-                        <button onClick={this.startGame}>New Game</button>
-                        <div className='row'>
-                            <div className='col-md-4'>
-                                <h3>Select a question</h3>
-                                <Questions possibleQuestions={this.state.possibleQuestions} chooseQuestion={this.chooseQuestion}/>
-                            </div>
-                            <div className='col-md-4'>
-                                <h3>Selected question</h3>
-                                <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers} getUserAnswer={this.handleUserAnswer} />
-                            </div>
-                            <div className='col-md-4'>
-                                <h3>Answer history</h3>
-                                <History history={this.state.answers}/>
+                    <div className='mainContent'>
+                        <div className="divForNewGame">
+                            <button className="impBtn" onClick={this.startGame}>New Game</button>
+                        </div>
+                        <div className="container-fluid">
+                            <div className='row'>
+                                <div className='col-md-4'>
+                                    <div className='viewQuestion'>
+                                        <Questions possibleQuestions={this.state.possibleQuestions} chooseQuestion={this.chooseQuestion}/>
+                                    </div>
+                                </div>
+                                <div className='col-md-4'>
+                                    <div className='viewAnswer'>
+                                        <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers} getUserAnswer={this.handleUserAnswer} />
+                                    </div>
+                                </div>
+                                <div className='col-md-4'>
+                                    <div className='viewHistory'>
+                                        <History history={this.state.answers}/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

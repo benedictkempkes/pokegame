@@ -25,8 +25,10 @@ export class Answers extends React.Component {
             );
         }
         return (
-            <div>
-                <h1>{this.props.currentQuestion}</h1>
+            <div className="answers">
+                <div className="headerAnswers">
+                    <h3>{this.props.currentQuestion}</h3>
+                </div>
                 {answerView}
             </div>
         );

@@ -14,7 +14,7 @@ export class Questions extends React.Component {
         let content;
         let questionItem;
         if(typeof this.props.possibleQuestions === 'string'){
-            content = <img src={this.props.possibleQuestions}/>
+            content = <img width="100%" src={this.props.possibleQuestions} alt="Pokemon Card"/>
         }else{
             const questionProp = Object.getOwnPropertyNames(this.props.possibleQuestions);
             questionItem = questionProp.map( (value, index) =>
@@ -22,14 +22,17 @@ export class Questions extends React.Component {
             );
             content = 
                 <div>
+                    <div className="headerQuestions">
+                        <button className="impBtn" onClick={this.handleClick} value='solution'>I want to solve</button>
+                    </div>
+                    <br />
                     <div className="btn-group">
                     {questionItem}
                     </div>
-                    <button onClick={this.handleClick} value='solution'>I want to solve</button>
                 </div>
         }
         return (
-            <div>
+            <div className="questions">
                 {content}
             </div>
         );

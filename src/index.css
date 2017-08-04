@@ -1,11 +1,114 @@
+body, html{
+    margin: 0;
+    padding: 0;
+    background-color: #DFDCE3;
+    font-family: 'Amatic SC', cursive;
+}
+
+h1 {
+    font-size: 4em;
+}
+
+h2 {
+    font-size: 3em;
+}
+
+h3 {
+    font-size: 2.5em;
+}
+
+p {
+    font-size: 1.7em;
+}
+
+.glyphicon-ok {
+    color: #4abdac;
+}
+
+.glyphicon-remove {
+    color: #FC4A1A;
+}
+
 .header {
-    
+    text-align: center;
+    margin: 0px 50px 50px;
+    border-bottom: 1px solid #FC4A1A;
 }
 
 .main {
-    
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.main button{
+    border: none;
+    background-color: #F7B733;
+    padding: 10px 20px;
+    font-size: 1.7em;
+}
+
+.main button:hover, .main button:focus, .main button:active{
+    background-color: #FC4A1A;
+}
+
+.main .divForNewGame {
+    text-align: center;
+}
+
+.main .impBtn {
+    color: #fff;
+    background-color: #4abdac;
+    border: none;
+    font-size: 2em;
+}
+
+.main .col-md-4 {
+    padding: 20px;
+}
+
+.main .viewQuestion, .main .viewAnswer, .main .viewHistory {
+    padding: 20px;
+}
+
+.questions .headerQuestions {
+    height: 100px;
+    border-bottom: 1px solid #FC4A1A;
+    margin-bottom: 50px;
+}
+
+.questions .btn-group button {
+    margin: 5px;
+}
+
+.answers .headerAnswers {
+    height: 100px;
+}
+
+.answers button{
+    margin: 5px;
+}
+
+.history .headerHistory{
+    height: 100px;
+    border-bottom: 1px solid #FC4A1A;
+    margin-bottom: 50px;
+}
+
+.history .headerHistory h3{
+    margin-top: 0;
+}
+
+.history ul{
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.history li{
+    font-size: 2em;
+    margin: 5px 0px;
 }
 
 .footer {
-    
+    text-align: center;
 }

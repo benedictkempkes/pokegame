@@ -10,8 +10,13 @@ export class History extends React.Component {
             );
         }
         return (
-            <div>
-                {historyItems}
+            <div className="history">
+                <div className="headerHistory">
+                    <h3>Answer history</h3>
+                </div>
+                <ul>
+                    {historyItems}
+                </ul>
             </div>
         );
     }
