@@ -16,6 +16,8 @@ const possibleQuestions = {
     resistances: 'What is your resistance?'
 };
 
+var questionValue;
+
 export class Main extends React.Component {
     constructor(props) {
         super(props);
@@ -24,9 +26,12 @@ export class Main extends React.Component {
             loading: false,
             currentQuestion: '',
             possibleAnswers: [],
-            rightAnswer: {}
+            rightAnswer: {},
+            answers: [
+            ]
         };
         this.chooseQuestion = this.chooseQuestion.bind(this);
+        this.handleUserAnswer = this.handleUserAnswer.bind(this);
     }
     componentDidMount(){
         $.ajax({
@@ -40,6 +45,7 @@ export class Main extends React.Component {
                     data: rawData,
                     rightAnswer: rightAnswer
                 });
+                console.log(this.state.rightAnswer);
             }.bind(this),
             error: function(xhr, status, err){
                 this.setState({
@@ -50,6 +56,7 @@ export class Main extends React.Component {
     }
     
     chooseQuestion(newQuestion) {
+        questionValue = newQuestion;
         this.createAnswers(newQuestion);
         this.setState({
             currentQuestion: possibleQuestions[newQuestion]
@@ -115,11 +122,6 @@ export class Main extends React.Component {
             possibleAnswers: answers
         });
     }
-    
-    componentDidUpdate() {
-        console.log(this.state.possibleAnswers);
-    }
-    
     getAnswersFromStrings(para, answerItemUnique, formatRightAnswer){
         let result = [];
         if(this.state.rightAnswer[para] == null){
@@ -169,7 +171,100 @@ export class Main extends React.Component {
         }
         return result;
     }
-    
+    handleUserAnswer(val1, val2){
+        let solution = '';
+        if(val2 !== null){
+            solution = this.checkNumberAnswer(val1, val2);
+        }else{
+            solution = this.checkOtherAnswer(val1);
+        }
+        let newAnswer = {
+                question: possibleQuestions[questionValue],
+                answer: val1,
+                solution: solution
+            };
+        let newAnswers = this.state.answers;
+        newAnswers.push(newAnswer);
+        this.setState({
+            answers: newAnswers
+        });
+        
+        
+    }
+    checkNumberAnswer(val1, val2){
+        if(val1 <= this.state.rightAnswer[questionValue] && val2 >= this.state.rightAnswer[questionValue]){
+            return 'True';
+        }else{
+            return 'False';
+        }
+    }
+    checkOtherAnswer(val1){
+        if(!this.state.rightAnswer[questionValue]){
+            //Undefined as answer
+            if(val1 === 'None'){
+                return 'True';
+            }else{
+                return 'False';
+            }
+        }else{
+            switch(questionValue){
+                case 'rarity':
+                    return this.checkString(val1);
+                case 'types':
+                    return this.CheckArray(val1);
+                case 'weaknesses':
+                    return this.CheckObject(val1, 'type');
+                case 'attacks':
+                    return this.CheckObject(val1, 'name');
+                case 'evolvesFrom':
+                    return this.checkString(val1);
+                case 'ability':
+                    if(val1 === this.state.rightAnswer[questionValue].name){
+                        return 'True';
+                    }else{
+                        return 'False';
+                    }
+                case 'resistances':
+                    return this.CheckObject(val1, 'type');
+                default:
+                    console.log('Something went wrong');
+            }
+        }
+    }
+    checkString(val1){
+        if(val1 === this.state.rightAnswer[questionValue]){
+            return 'True';
+        }else{
+            return 'False';
+        }
+    }
+    CheckArray(val1){
+        if(val1 === this.state.rightAnswer[questionValue][0]){
+            return 'True';
+        }else{
+            return 'False';
+        }
+    }
+    CheckObject(val1, attributeName){
+        if(this.state.rightAnswer[questionValue].length > 1){
+            let correctAnswerAsArray = [];
+            for(var i = 0; i < this.state.rightAnswer[questionValue].length; i++){
+                correctAnswerAsArray.push(this.state.rightAnswer[questionValue][i][attributeName]);
+            }
+            if(val1 === correctAnswerAsArray.toString()){
+                return 'True';
+            }else{
+                return 'False';
+            }
+        }else{
+            if(val1 === this.state.rightAnswer[questionValue][0][attributeName]){
+                return 'True';
+            }else{
+                return 'False';
+            }
+        }
+
+    }
     render() {
         let content;
         if(this.state.loading){
@@ -183,11 +278,11 @@ export class Main extends React.Component {
                         </div>
                         <div className='col-md-4'>
                             <h3>Selected question</h3>
-                            <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers}/>
+                            <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers} getUserAnswer={this.handleUserAnswer} />
                         </div>
                         <div className='col-md-4'>
                             <h3>Answer history</h3>
-                            <History />
+                            <History history={this.state.answers}/>
                         </div>
                     </div>
         }
