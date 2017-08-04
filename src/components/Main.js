@@ -4,18 +4,6 @@ import { Questions } from './Questions';
 import { Answers } from './Answers';
 import { History } from './History';
 
-const possibleQuestions = {
-    hp:     'How much HP do you have?',
-    number: 'What numer are you?',
-    rarity: 'What rarity do you have?',
-    types :  'What type are you?',
-    weaknesses: 'What is/are your weakness/es?',
-    attacks: 'What are your attacks?',
-    evolvesFrom: 'You evolve from?',
-    ability: 'What is your ability',
-    resistances: 'What is your resistance?'
-};
-
 var questionValue;
 
 export class Main extends React.Component {
@@ -24,14 +12,26 @@ export class Main extends React.Component {
         this.state = {
             data : [],
             loading: false,
-            currentQuestion: '',
+            possibleQuestions: {
+                hp:     'How much HP do you have?',
+                number: 'What numer are you?',
+                rarity: 'What rarity do you have?',
+                types :  'What type are you?',
+                weaknesses: 'What is/are your weakness/es?',
+                attacks: 'What are your attacks?',
+                evolvesFrom: 'You evolve from?',
+                ability: 'What is your ability',
+                resistances: 'What is your resistance?'
+            },
+            currentQuestion: 'Select one attribute from the right',
             possibleAnswers: [],
             rightAnswer: {},
-            answers: [
-            ]
+            falseAnswer: [],
+            answers: []
         };
         this.chooseQuestion = this.chooseQuestion.bind(this);
         this.handleUserAnswer = this.handleUserAnswer.bind(this);
+        this.startGame = this.startGame.bind(this);
     }
     componentDidMount(){
         $.ajax({
@@ -40,10 +40,21 @@ export class Main extends React.Component {
             success: function(data) {
                 let random = Math.floor((Math.random()* data.cards.length) +1);
                 let rightAnswer = data.cards[random-1];
+                let falseAnswer = [];
+                falseAnswer.push(rightAnswer.name);
+                while(falseAnswer.length<4){
+                    let randomV = Math.floor((Math.random()* data.cards.length) +1);
+                    let nextPokemon = data.cards[randomV-1].name;
+                    if($.inArray(nextPokemon, falseAnswer) === -1){
+                        falseAnswer.push(nextPokemon);
+                    }
+                    
+                }
                 let rawData = data.cards;
                 this.setState({
                     data: rawData,
-                    rightAnswer: rightAnswer
+                    rightAnswer: rightAnswer,
+                    falseAnswer: falseAnswer
                 });
                 console.log(this.state.rightAnswer);
             }.bind(this),
@@ -55,14 +66,52 @@ export class Main extends React.Component {
         });
     }
     
-    chooseQuestion(newQuestion) {
-        questionValue = newQuestion;
-        this.createAnswers(newQuestion);
+    startGame(){
+        let random = Math.floor((Math.random()* this.state.data.length) +1);
+        let rightAnswer = this.state.data[random-1];
+        let falseAnswer = [];
+        falseAnswer.push(rightAnswer.name);
+        while(falseAnswer.length<4){
+            let randomV = Math.floor((Math.random()* this.state.data.length) +1);
+            let nextPokemon = this.state.data[randomV-1].name;
+            if($.inArray(nextPokemon, falseAnswer) === -1){
+                falseAnswer.push(nextPokemon);
+            }
+
+        }
         this.setState({
-            currentQuestion: possibleQuestions[newQuestion]
+            possibleQuestions: {
+                hp:     'How much HP do you have?',
+                number: 'What numer are you?',
+                rarity: 'What rarity do you have?',
+                types :  'What type are you?',
+                weaknesses: 'What is/are your weakness/es?',
+                attacks: 'What are your attacks?',
+                evolvesFrom: 'You evolve from?',
+                ability: 'What is your ability',
+                resistances: 'What is your resistance?'
+            },
+            currentQuestion: 'Select one attribute from the right',
+            possibleAnswers: [],
+            rightAnswer: rightAnswer,
+            falseAnswer: falseAnswer,
+            answers: []
         });
+        console.log(this.state.rightAnswer);
     }
     
+    chooseQuestion(newQuestion) {
+        questionValue = newQuestion;
+        if(newQuestion === 'solution'){
+            let possibleAnswers = this.state.falseAnswer;
+            this.setState({
+                currentQuestion: 'Pick your solution',
+                possibleAnswers: possibleAnswers
+            });
+        }else{
+            this.createAnswers(newQuestion);
+        }
+    }
     createAnswers(para){
         //get all possible Answers
         const answerItem = this.state.data.map( (object) =>
@@ -118,8 +167,10 @@ export class Main extends React.Component {
             default:
                 console.log('wrong');
         }
+        let possibleQuestion = this.state.possibleQuestions;
         this.setState({
-            possibleAnswers: answers
+            possibleAnswers: answers,
+            currentQuestion: possibleQuestion[para]
         });
     }
     getAnswersFromStrings(para, answerItemUnique, formatRightAnswer){
@@ -172,6 +223,35 @@ export class Main extends React.Component {
         return result;
     }
     handleUserAnswer(val1, val2){
+        if(questionValue === 'solution'){
+            let finalAnswer;
+            let finalImg = this.state.rightAnswer.imageUrlHiRes;
+            if(val1 === this.state.rightAnswer.name){
+                finalAnswer = 'Congratulations! You won!';
+            }else{
+                finalAnswer = 'Sorry! You lost!';
+            }
+            
+            this.setState({
+                possibleQuestions: finalImg,
+                possibleAnswers: [],
+                currentQuestion: finalAnswer
+            });
+        }else{
+            this.handlePreAnswer(val1, val2);
+        }
+    }
+    handlePreAnswer(val1, val2){
+        let question = this.state.possibleQuestions[questionValue];
+        let newPossibleQuestions = this.state.possibleQuestions;
+        delete newPossibleQuestions[questionValue];
+        let answer;
+        if(val2 !== 'null'){
+           answer = val1 + "-" + val2;
+        }else{
+           answer = val1;
+            
+        }
         let solution = '';
         if(val2 !== null){
             solution = this.checkNumberAnswer(val1, val2);
@@ -179,17 +259,18 @@ export class Main extends React.Component {
             solution = this.checkOtherAnswer(val1);
         }
         let newAnswer = {
-                question: possibleQuestions[questionValue],
-                answer: val1,
+                question: question,
+                answer: answer,
                 solution: solution
             };
         let newAnswers = this.state.answers;
         newAnswers.push(newAnswer);
         this.setState({
-            answers: newAnswers
+            answers: newAnswers,
+            possibleQuestions: newPossibleQuestions,
+            currentQuestion: 'Select one attribute from the right',
+            possibleAnswers: []
         });
-        
-        
     }
     checkNumberAnswer(val1, val2){
         if(val1 <= this.state.rightAnswer[questionValue] && val2 >= this.state.rightAnswer[questionValue]){
@@ -263,26 +344,29 @@ export class Main extends React.Component {
                 return 'False';
             }
         }
-
     }
+    
     render() {
         let content;
         if(this.state.loading){
            console.log('Webpage is loading');
         }else{
             content = 
-                    <div className='row'>
-                        <div className='col-md-4'>
-                            <h3>Select a question</h3>
-                            <Questions possibleQuestions={possibleQuestions} chooseQuestion={this.chooseQuestion}/>
-                        </div>
-                        <div className='col-md-4'>
-                            <h3>Selected question</h3>
-                            <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers} getUserAnswer={this.handleUserAnswer} />
-                        </div>
-                        <div className='col-md-4'>
-                            <h3>Answer history</h3>
-                            <History history={this.state.answers}/>
+                    <div>
+                        <button onClick={this.startGame}>New Game</button>
+                        <div className='row'>
+                            <div className='col-md-4'>
+                                <h3>Select a question</h3>
+                                <Questions possibleQuestions={this.state.possibleQuestions} chooseQuestion={this.chooseQuestion}/>
+                            </div>
+                            <div className='col-md-4'>
+                                <h3>Selected question</h3>
+                                <Answers currentQuestion={this.state.currentQuestion} possibleAnswers={this.state.possibleAnswers} getUserAnswer={this.handleUserAnswer} />
+                            </div>
+                            <div className='col-md-4'>
+                                <h3>Answer history</h3>
+                                <History history={this.state.answers}/>
+                            </div>
                         </div>
                     </div>
         }
