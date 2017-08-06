@@ -230,7 +230,9 @@ export class Main extends React.Component {
             }
             
             this.setState({
-                possibleQuestions: finalImg,
+                possibleQuestions: {
+                    img: finalImg
+                },
                 possibleAnswers: [],
                 currentQuestion: finalAnswer
             });
@@ -269,7 +271,7 @@ export class Main extends React.Component {
         });
     }
     checkNumberAnswer(val1, val2){
-        if(val1 <= this.state.rightAnswer[questionValue] && val2 >= this.state.rightAnswer[questionValue]){
+        if(Number(val1) <= this.state.rightAnswer[questionValue] && Number(val2) >= this.state.rightAnswer[questionValue]){
             return 'True';
         }else{
             return 'False';

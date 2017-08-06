@@ -1,5 +1,6 @@
 import React from 'react';
 import {SliderView} from './SliderView';
+import PropTypes from 'prop-types';
 
 export class Answers extends React.Component {
     constructor(props){
@@ -14,12 +15,19 @@ export class Answers extends React.Component {
         const target = e.target.value;
         this.props.getUserAnswer(target, null);
     }
+    shuffle(a){
+        for(let i = a.length; i; i-- ){
+            let j = Math.floor(Math.random() * i);
+            [a[i - 1], a[j]] = [a[j], a[i - 1]];
+        }
+    }
     render(){
         var answerView;
         const possibleAnswers = this.props.possibleAnswers;
         if(typeof this.props.possibleAnswers[0] === 'number'){
             answerView = <SliderView getNumbers={this.handleNumbers} />
         }else{
+            this.shuffle(possibleAnswers);
             answerView = possibleAnswers.map( (value, index) =>
                 <button key={index} value={value} onClick={this.handleClick} >{value}</button>
             );
@@ -33,4 +41,10 @@ export class Answers extends React.Component {
             </div>
         );
     }
+}
+
+Answers.propTypes = {
+    currentQuestion: PropTypes.string,
+    possibleAnswers: PropTypes.array,
+    getUserAnswer: PropTypes.func
 }

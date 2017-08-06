@@ -7,14 +7,14 @@ class App extends React.Component {
         <div className="page">
             <div className="header">
                 <h1>Pokemon Card Quiz</h1>
-                <h2>Just another boring unofficial pokemon game</h2>
+                <h2>Which Pokemon are you?</h2>
             </div>
             <div className="main">
                 <Main />
             </div>
             <div className="footer">
                 Developed by Benedict Kempkes <br />
-                Xing
+                <a href="https://www.xing.com/profile/Benedict_Kempkes?sc_o=mxb_p">Xing</a>
             </div>
         </div>
     );

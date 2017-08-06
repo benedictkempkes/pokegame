@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export class Questions extends React.Component {
     constructor(props){
@@ -13,8 +14,8 @@ export class Questions extends React.Component {
     render(){
         let content;
         let questionItem;
-        if(typeof this.props.possibleQuestions === 'string'){
-            content = <img width="100%" src={this.props.possibleQuestions} alt="Pokemon Card"/>
+        if(this.props.possibleQuestions.img){
+            content = <img width="100%" src={this.props.possibleQuestions.img} alt="Pokemon Card"/>
         }else{
             const questionProp = Object.getOwnPropertyNames(this.props.possibleQuestions);
             questionItem = questionProp.map( (value, index) =>
@@ -37,4 +38,9 @@ export class Questions extends React.Component {
             </div>
         );
     }
+}
+
+Questions.propTypes = {
+    possibleQuestions: PropTypes.object,
+    chooseQuestion: PropTypes.func
 }

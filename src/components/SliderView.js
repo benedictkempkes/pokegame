@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 export class SliderView extends React.Component {
     constructor(props){
@@ -33,15 +34,19 @@ export class SliderView extends React.Component {
                 <form onSubmit={this.handleSubmit}>
                     <label>
                       Between
-                      <input type="text" value={this.state.valueDown} onChange={this.handleChangeDown} disabled/>
+                      <input type="text" value={this.state.valueDown} onChange={this.handleChangeDown} />
                     </label>
                     <label>
                       and
-                      <input type="text" value={this.state.valueUp} onChange={this.handleChangeUp} disabled/>
+                      <input type="text" value={this.state.valueUp} onChange={this.handleChangeUp} />
                     </label>
                     <input type="submit" value="Submit" />
                 </form>
              </div>
         );
     }
+}
+
+SliderView.propTypes = {
+    getNumbers: PropTypes.func
 }

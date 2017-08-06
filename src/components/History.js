@@ -1,5 +1,6 @@
 import React from 'react';
 import {HistoryItem} from './HistoryItem.js';
+import PropTypes from 'prop-types';
 
 export class History extends React.Component {
     render(){
@@ -20,4 +21,8 @@ export class History extends React.Component {
             </div>
         );
     }
+}
+
+History.propTypes = {
+    history: PropTypes.array
 }
