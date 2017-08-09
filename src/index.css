@@ -88,6 +88,10 @@ p {
     margin: 5px;
 }
 
+.answers .slider{
+    margin: 40px 0px;
+}
+
 .history .headerHistory{
     height: 100px;
     border-bottom: 1px solid #FC4A1A;

@@ -25,7 +25,7 @@ export class Answers extends React.Component {
         var answerView;
         const possibleAnswers = this.props.possibleAnswers;
         if(typeof this.props.possibleAnswers[0] === 'number'){
-            answerView = <SliderView getNumbers={this.handleNumbers} />
+            answerView = <SliderView getNumbers={this.handleNumbers} minValue={this.props.possibleAnswers[0]} maxValue={this.props.possibleAnswers[1]}/>
         }else{
             this.shuffle(possibleAnswers);
             answerView = possibleAnswers.map( (value, index) =>
