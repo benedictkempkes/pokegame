@@ -10,23 +10,11 @@ export class SliderView extends React.Component {
             valueUp: 10
         };
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChangeDown = this.handleChangeDown.bind(this);
-        this.handleChangeUp = this.handleChangeUp.bind(this);
         this.change = this.change.bind(this);
     }
     handleSubmit(e){
         this.props.getNumbers(this.state.valueDown, this.state.valueUp);
         e.preventDefault();
-    }
-    handleChangeDown(e){
-        this.setState({
-            valueDown: e.target.value
-        });
-    }
-    handleChangeUp(e){
-        this.setState({
-            valueUp: e.target.value
-        });
     }
     change(down, up){
         this.setState({
@@ -40,14 +28,14 @@ export class SliderView extends React.Component {
                 <div className="slider">
                     <SliderComponent max={this.props.maxValue} min={this.props.minValue} getValues={this.change} />
                 </div>
-                <form onSubmit={this.handleSubmit}>
+                <form className="numberInputs" onSubmit={this.handleSubmit}>
                     <label>
                       Between
-                      <input type="text" value={this.state.valueDown} onChange={this.handleChangeDown} disabled/>
+                      <input type="text" value={this.state.valueDown} disabled/>
                     </label>
                     <label>
                       and
-                      <input type="text" value={this.state.valueUp} onChange={this.handleChangeUp} disabled/>
+                      <input type="text" value={this.state.valueUp} disabled/>
                     </label>
                     <input type="submit" value="Submit" />
                 </form>

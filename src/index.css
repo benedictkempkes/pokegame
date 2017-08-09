@@ -92,6 +92,14 @@ p {
     margin: 40px 0px;
 }
 
+.answers .numberInputs {
+    font-size: 1.5em;
+}
+
+.numberInputs input {
+    margin: 0px 5px;
+}
+
 .history .headerHistory{
     height: 100px;
     border-bottom: 1px solid #FC4A1A;
