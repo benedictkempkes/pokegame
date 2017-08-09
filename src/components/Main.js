@@ -23,7 +23,7 @@ export class Main extends React.Component {
                 ability: 'What is your ability',
                 resistances: 'What is your resistance?'
             },
-            currentQuestion: 'Select one attribute from the right',
+            currentQuestion: 'Select one attribute from the left',
             possibleAnswers: [],
             rightAnswer: {},
             falseAnswer: [],
@@ -89,7 +89,7 @@ export class Main extends React.Component {
                 ability: 'What is your ability?',
                 resistances: 'What is your resistance?'
             },
-            currentQuestion: 'Select one attribute from the right',
+            currentQuestion: 'Select one attribute from the left',
             possibleAnswers: [],
             rightAnswer: rightAnswer,
             falseAnswer: falseAnswer,
@@ -266,7 +266,7 @@ export class Main extends React.Component {
         this.setState({
             answers: newAnswers,
             possibleQuestions: newPossibleQuestions,
-            currentQuestion: 'Select one attribute from the right',
+            currentQuestion: 'Select one attribute from the left',
             possibleAnswers: []
         });
     }
@@ -351,9 +351,6 @@ export class Main extends React.Component {
         }else{
             content = 
                     <div className='mainContent'>
-                        <div className="divForNewGame">
-                            <button className="impBtn" onClick={this.startGame}>New Game</button>
-                        </div>
                         <div className="container-fluid">
                             <div className='row'>
                                 <div className='col-md-4'>
@@ -372,6 +369,9 @@ export class Main extends React.Component {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div className="divForNewGame">
+                            <button className="impBtn" onClick={this.startGame}>New Game</button>
                         </div>
                     </div>
         }
